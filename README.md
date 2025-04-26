@@ -6,6 +6,9 @@ Pass in payloads when loading to be able to customize how your next scene loads.
 # Requirements
 Minimum Unity Version Tested: 2022.3.36f1
 
+# Installation Process
+Honestly, I don't know how to support Unity Packaging for the initial release, so just pull this repos and add it under your assets folder and it should work fine for now.
+
 # Usage
 1. Create your custom initializer
 ```c++
