@@ -16,6 +16,7 @@ namespace xksl
     public class SceneInitializerEditor : EditorWindow
     {
         private List<Type> defaultInitializerTypes = new List<Type>();
+        private List<Type> sceneReferenceTypes = new List<Type>();
 
         private List<Type> compatibleDefaultInitializerTypes = new List<Type>();
         private string[] compatibleDefaultInitializerTypesNames;
@@ -69,20 +70,17 @@ namespace xksl
 
         private void OnGUI()
         {
-            ISceneInitializer initializer = EditorSceneManager.GetActiveScene().FindInitializer();
+            Scene activeScene = EditorSceneManager.GetActiveScene();
+            ISceneInitializer initializer = activeScene.FindInitializer();
+
+
             int newIndex = EditorGUILayout.Popup("Initializer Type", initializerSelectedIndex, initializerTypesNames);
             if (newIndex != initializerSelectedIndex)
             {
                 Undo.IncrementCurrentGroup();
                 Undo.SetCurrentGroupName(undoGroupInitializerCreationName);
-
                 initializerSelectedIndex = newIndex;
-                if (initializer != null)
-                {
-                    Undo.DestroyObjectImmediate(initializer.gameObject);
-                    Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
-                    initializer = null;
-                }
+
                 if (newIndex > 0)
                 {
                     GameObject obj = new GameObject("Scene Initializer");
@@ -90,11 +88,20 @@ namespace xksl
                     initializer = obj.AddComponent(initializerTypes[newIndex - 1]) as SceneInitializer;
                     BuildCompatibleDefaultInitializerTypeList(initializer);
                     Undo.RegisterCreatedObjectUndo(obj, "Scene Initializer Creation");
+
+                    CreateSceneReference(initializer, activeScene);
+                }
+                else
+                {
+                    DeleteSceneReference(activeScene);
+                    Undo.DestroyObjectImmediate(initializer.gameObject);
+                    Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
+                    initializer = null;
                 }
 
                 Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 
-                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                EditorSceneManager.MarkSceneDirty(activeScene);
 
             }
             if (initializer == null)
@@ -103,13 +110,18 @@ namespace xksl
             }
             else
             {
+                if (GUILayout.Button("Recreate Reference Asset"))
+                {
+                    CreateSceneReference(initializer, activeScene);
+                }
+
                 bool hideInitializer = initializer.gameObject.hideFlags == HideFlags.HideInHierarchy;
                 bool newHideInitializer = GUILayout.Toggle(hideInitializer, "Hide Initializer");
 
                 if (newHideInitializer != hideInitializer)
                 {
-                    initializer.gameObject.hideFlags = newHideInitializer ? HideFlags.HideInHierarchy : HideFlags.None;
-                    EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+                    initializer.gameObject.hideFlags = newHideInitializer ? HideFlags.HideInHierarchy : HideFlags.HideInInspector;
+                    EditorSceneManager.MarkSceneDirty(activeScene);
                 }
 
                 newIndex = EditorGUILayout.Popup("Default Initializer Type", compatibleDefaultInitializerSelectedIndex, compatibleDefaultInitializerTypesNames);
@@ -117,6 +129,7 @@ namespace xksl
                 Undo.RecordObject(initializer as MonoBehaviour, undoGroupDefaultInitializerAssignmentName);
                 if (newIndex != compatibleDefaultInitializerSelectedIndex)
                 {
+                    
                     if (newIndex == 0)
                         initializer.DefaultInitializer = null;
                     else
@@ -131,16 +144,20 @@ namespace xksl
         {
             foreach (var type in AppDomain.CurrentDomain.GetAssemblies().Where(a => !a.IsDynamic)
                 .SelectMany(a => a.GetExportedTypes())
-                .Where(t => !t.IsInterface &&
-                    (t.IsSubclassOf(typeof(SceneInitializer)) || t.IsSubclassOf(typeof(DefaultSceneInitializer)))))
+                .Where(t => !t.IsGenericType && !t.IsAbstract &&
+                    (t.GetInterface(nameof(ISceneInitializer)) != null || t.IsSubclassOf(typeof(DefaultSceneInitializer)) || t.IsSubclassOf(typeof(SceneReference)))))
             {
-                if (type.IsSubclassOf(typeof(SceneInitializer)))
+                if (type.GetInterface(nameof(ISceneInitializer)) != null)
                 {
                     initializerTypes.Add(type);
                 }
-                else
+                else if (type.IsSubclassOf(typeof(DefaultSceneInitializer)))
                 {
                     defaultInitializerTypes.Add(type);
+                }
+                else
+                {
+                    sceneReferenceTypes.Add(type);
                 }
             }
 
@@ -165,6 +182,31 @@ namespace xksl
             {
                 compatibleDefaultInitializerTypesNames[i + 1] = compatibleDefaultInitializerTypes[i].Name;
             }
+        }
+
+        private void CreateSceneReference(ISceneInitializer initializer, Scene scene)
+        {
+            Type type = sceneReferenceTypes.FirstOrDefault(t => t.IsSubclassOf(typeof(SceneReference<>).MakeGenericType(initializer.GetType())));
+            if (type == null)
+            {
+                SceneManager.LogWarning("Failed to generate a SceneReference asset: No SceneReference type found which is a subclass of " + typeof(SceneReference<>).MakeGenericType(initializer.GetType()));
+                return;
+            }
+
+            SceneReference reference = ScriptableObject.CreateInstance(type) as SceneReference;
+            reference.path = scene.path;
+            string path = Path.GetDirectoryName(scene.path) + "/" + Path.GetFileNameWithoutExtension(scene.path) + "_reference.asset";
+
+            AssetDatabase.DeleteAsset(path);
+
+            AssetDatabase.CreateAsset(reference, path);
+            AssetDatabase.SaveAssetIfDirty(reference);
+        }
+
+        private void DeleteSceneReference(Scene scene)
+        {
+            string path = Path.GetDirectoryName(scene.path) + "/" + Path.GetFileNameWithoutExtension(scene.path) + "_reference.asset";
+            AssetDatabase.DeleteAsset(path);
         }
     }
 }
