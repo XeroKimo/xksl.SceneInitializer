@@ -19,9 +19,11 @@ using xksl;
 public struct MyPayload 
 {
     //Add variables here
+    public int level;
+    public GameObject playerPrefab;
 }
 
-//Create a class which inherits from DefaultSceneInitializer<Payload Type> to expose
+//Create a non-generic class which inherits from DefaultSceneInitializer<Payload Type> to expose
 //it to the editor.
 public class MyPayloadDefault : DefaultSceneInitializer<MyPayload> {}
 
@@ -32,6 +34,8 @@ public class MySceneInitializer : SceneInitializer, ISceneInitializeWith<MyPaylo
 {
     //SceneInitializer is a component, you can add variables here as well
     //to expose to the editor.
+    [SerializeField]
+    private List<Transform> spawnPoints;
 
     //Exposed with SceneInitializer
     public override void Initialize()
@@ -42,11 +46,19 @@ public class MySceneInitializer : SceneInitializer, ISceneInitializeWith<MyPaylo
     //Exposed with ISceneInitializeWith<MyPayload>
     public void Initialize(MyPayload args)
     {
-
+        Spawn(arg.playerPrefab, spawnPoints.Random());
     }
 }
+
+//Optional: Create a non-generic class which inherits from SceneReference<Initializer>, this enables creating a scriptable object
+//when assigning a initializer to a scene, allowing you to store scenes strongly typed so you can get compile errors instead of runtime ones
+//if you try to load the scene with an incompatible payload
+public class MySceneReference : SceneReference<MySceneInitializer>
+{
+
+}
 ```
-2. Create an Initializer in the scene. There are 2 approaches, you can do it manually by creating a game object and attaching an initializer script to it, or you can open the Initializer Editor under Scenes->Initializer Window
+2. Create an Initializer in the scene. It is recommended that you create one through the Initializer Editor under Scenes->Initializer Window to get access to extra features like changing the default initializer type or automatic scene reference creation
 ![Editor Image](/Screenshots/EditorExample.png)
 3. Fill in the data needed for your initializer.
 4. Call `xksl.SceneManager.LoadScene()`
@@ -63,6 +75,9 @@ There's no restriction except for if you want the payload to be exposed in the e
 
 ### What's the point of the `DefaultSceneInitializer`?
 The default scene initializer allows you to pass in a payload as the start up scene so you don't have to create a 2nd scene to load in from. This allows for easier testing if your scene is meant to be loaded.
+
+### Why do I have to create a non-generic type inheriting from `DefaultSceneInitializer<>` or `SceneReference<>`?
+Both of these have to do with restrictions in Unity. `DefaultSceneInitializer<>` is needed because the editor can't display generic types nor can you reference assets of generic type. `SceneReference<>`'s issue is that you can't instantiate `ScriptableObject` which contain generic parameters.
 
 # Advanced
 ### Attaching a payload without calling `xksl.SceneManager.LoadScene()`
