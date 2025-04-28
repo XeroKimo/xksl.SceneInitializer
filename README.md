@@ -61,7 +61,7 @@ public class MySceneReference : SceneReference<MySceneInitializer>
 2. Create an Initializer in the scene. It is recommended that you create one through the Initializer Editor under Scenes->Initializer Window to get access to extra features like changing the default initializer type or automatic scene reference creation
 ![Editor Image](/Screenshots/EditorExample.png)
 3. Fill in the data needed for your initializer.
-4. Call `xksl.SceneManager.LoadScene()`
+4. Call `xksl.SceneManager.LoadScene()` with the scene you want to intialize with and the payload. Ex: `xksl.SceneManager.LoadScene(gameScene, new MyPayload{ level = 100, playerPrefab = defaultPlayerPrefab });`
 
 # FAQ
 ### When is the Initializer Invoked?
