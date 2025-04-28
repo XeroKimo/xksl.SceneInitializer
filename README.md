@@ -51,8 +51,8 @@ public class MySceneInitializer : SceneInitializer, ISceneInitializeWith<MyPaylo
 }
 
 //Optional: Create a non-generic class which inherits from SceneReference<Initializer>, this enables creating a scriptable object
-//when assigning a initializer to a scene, allowing you to store scenes strongly typed so you can get compile errors instead of runtime ones
-//if you try to load the scene with an incompatible payload
+//when assigning a initializer to a scene, allowing you to store strongly typed scene references so you can get compile errors instead of runtime ones
+//if you try to load the scene with an incompatible payload. These references will always be stored alongside the scene path.
 public class MySceneReference : SceneReference<MySceneInitializer>
 {
 
