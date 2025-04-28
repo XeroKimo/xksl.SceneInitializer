@@ -180,7 +180,7 @@ namespace xksl
             compatibleDefaultInitializerTypesNames[0] = "None";
             for (int i = 0; i < compatibleDefaultInitializerTypes.Count; i++)
             {
-                compatibleDefaultInitializerTypesNames[i + 1] = compatibleDefaultInitializerTypes[i].Name;
+                compatibleDefaultInitializerTypesNames[i + 1] = compatibleDefaultInitializerTypes[i].BaseType.GenericTypeArguments[0].Name;
             }
         }
 
