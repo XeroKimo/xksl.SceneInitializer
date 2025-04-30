@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditorInternal;
@@ -85,7 +86,7 @@ namespace xksl
                 {
                     GameObject obj = new GameObject("Scene Initializer");
                     obj.hideFlags = HideFlags.HideInHierarchy;
-                    initializer = obj.AddComponent(initializerTypes[newIndex - 1]) as SceneInitializer;
+                    initializer = obj.AddComponent(initializerTypes[newIndex - 1]) as ISceneInitializer;
                     BuildCompatibleDefaultInitializerTypeList(initializer);
                     Undo.RegisterCreatedObjectUndo(obj, "Scene Initializer Creation");
 
@@ -120,7 +121,7 @@ namespace xksl
 
                 if (newHideInitializer != hideInitializer)
                 {
-                    initializer.gameObject.hideFlags = newHideInitializer ? HideFlags.HideInHierarchy : HideFlags.HideInInspector;
+                    initializer.gameObject.hideFlags = newHideInitializer ? HideFlags.HideInHierarchy : HideFlags.None;
                     EditorSceneManager.MarkSceneDirty(activeScene);
                 }
 
@@ -210,3 +211,4 @@ namespace xksl
         }
     }
 }
+#endif

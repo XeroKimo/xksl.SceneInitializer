@@ -15,20 +15,22 @@ namespace xksl
 
     public static class SceneManager
     {
-        static Dictionary<int, List<Action<Scene>>> initializerMap = new Dictionary<int, List<Action<Scene>>>();
+        static Dictionary<int, Queue<Action<Scene>>> initializerMap = new Dictionary<int, Queue<Action<Scene>>>();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void SubsystemLoad()
         {
             UnitySceneManager.sceneLoaded += (scene, loadType) =>
             {
-                if (initializerMap.TryGetValue(scene.buildIndex, out List<Action<Scene>> actions))
+                if (initializerMap.TryGetValue(scene.buildIndex, out Queue<Action<Scene>> actions))
                 {
-                    if(actions.Count == 0)
+                    if (actions.Count == 0)
+                    {
+                        LogWarning("No payload was found upon loading scene: " + scene.name);
                         return;
+                    }
 
-                    actions[0].Invoke(scene);
-                    actions.RemoveAt(0);
+                    actions.Dequeue().Invoke(scene);
                 }
             };
         }
@@ -246,10 +248,10 @@ namespace xksl
             Log("Loading \"" + sceneName + "\" with payload \"" + typeof(T).Name + "\"");
             if (!initializerMap.ContainsKey(buildIndex))
             {
-                initializerMap.Add(buildIndex, new List<Action<Scene>>());
+                initializerMap.Add(buildIndex, new Queue<Action<Scene>>());
             }
 
-            initializerMap[buildIndex].Add(scene =>
+            initializerMap[buildIndex].Enqueue(scene =>
             {
                 ISceneInitializer untypedInitializer = FindInitializer(scene);
                 if (untypedInitializer == null)
@@ -302,10 +304,10 @@ namespace xksl
 
             if (!initializerMap.ContainsKey(buildIndex))
             {
-                initializerMap.Add(buildIndex, new List<Action<Scene>>());
+                initializerMap.Add(buildIndex, new Queue<Action<Scene>>());
             }
 
-            initializerMap[buildIndex].Add(scene =>
+            initializerMap[buildIndex].Enqueue(scene =>
             {
                 ISceneInitializer initializer = FindInitializer(scene);
                 if (initializer == null)
