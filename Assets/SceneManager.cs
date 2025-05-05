@@ -13,6 +13,8 @@ namespace xksl
 {
     public struct NoPayload { };
 
+
+
     public static class SceneManager
     {
         static Dictionary<int, Queue<Action<Scene>>> initializerMap = new Dictionary<int, Queue<Action<Scene>>>();
@@ -79,12 +81,35 @@ namespace xksl
         }
 
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static void LoadScene(int buildIndex)
+        {
+            UnitySceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+            AttachEmptyPayload(buildIndex);
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static void LoadScene(string path)
+        {
+            UnitySceneManager.LoadScene(path, LoadSceneMode.Single);
+            AttachEmptyPayload(path);
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static void LoadScene(SceneReference scene)
+        {
+            UnitySceneManager.LoadScene(scene.Path, LoadSceneMode.Single);
+            AttachEmptyPayload(scene);
+        }
+
+        [Obsolete("Use LoadScene without parameters instead")]
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static void LoadScene(int buildIndex, NoPayload payload)
         {
             UnitySceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
             AttachPayload(buildIndex, payload);
         }
 
+        [Obsolete("Use LoadScene without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static void LoadScene(string path, NoPayload payload)
         {
@@ -92,6 +117,7 @@ namespace xksl
             AttachPayload(path, payload);
         }
 
+        [Obsolete("Use LoadScene without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static void LoadScene(SceneReference scene, NoPayload payload)
         {
@@ -121,12 +147,35 @@ namespace xksl
         }
 
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static void LoadSubscene(int buildIndex)
+        {
+            UnitySceneManager.LoadScene(buildIndex, LoadSceneMode.Additive);
+            AttachEmptyPayload(buildIndex);
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static void LoadSubscene(string path)
+        {
+            UnitySceneManager.LoadScene(path, LoadSceneMode.Additive);
+            AttachEmptyPayload(path);
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static void LoadSubscene(SceneReference scene)
+        {
+            UnitySceneManager.LoadScene(scene.Path, LoadSceneMode.Additive);
+            AttachEmptyPayload(scene);
+        }
+
+        [Obsolete("Use LoadSubscene without parameters instead")]
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static void LoadSubscene(int buildIndex, NoPayload payload)
         {
             UnitySceneManager.LoadScene(buildIndex, LoadSceneMode.Additive);
             AttachPayload(buildIndex, payload);
         }
 
+        [Obsolete("Use LoadSubscene without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static void LoadSubscene(string path, NoPayload payload)
         {
@@ -134,6 +183,7 @@ namespace xksl
             AttachPayload(path, payload);
         }
 
+        [Obsolete("Use LoadSubscene without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static void LoadSubscene(SceneReference scene, NoPayload payload)
         {
@@ -166,6 +216,31 @@ namespace xksl
         }
 
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static AsyncOperation LoadSceneAsync(int buildIndex)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
+            AttachEmptyPayload(buildIndex);
+            return op;
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static AsyncOperation LoadSceneAsync(string path)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
+            AttachEmptyPayload(path);
+            return op;
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
+        public static AsyncOperation LoadSceneAsync(SceneReference scene)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(scene.Path, LoadSceneMode.Single);
+            AttachEmptyPayload(scene);
+            return op;
+        }
+
+        [Obsolete("Use LoadSceneAsync without parameters instead")]
+        //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static AsyncOperation LoadSceneAsync(int buildIndex, NoPayload payload)
         {
             var op = UnitySceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Single);
@@ -173,6 +248,7 @@ namespace xksl
             return op;
         }
 
+        [Obsolete("Use LoadSceneAsync without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static AsyncOperation LoadSceneAsync(string path, NoPayload payload)
         {
@@ -181,6 +257,7 @@ namespace xksl
             return op;
         }
 
+        [Obsolete("Use LoadSceneAsync without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Single)
         public static AsyncOperation LoadSceneAsync(SceneReference scene, NoPayload payload)
         {
@@ -214,6 +291,31 @@ namespace xksl
         }
 
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static AsyncOperation LoadSubsceneAsync(int buildIndex)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+            AttachEmptyPayload(buildIndex);
+            return op;
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static AsyncOperation LoadSubsceneAsync(string path)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
+            AttachEmptyPayload(path);
+            return op;
+        }
+
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
+        public static AsyncOperation LoadSubsceneAsync(SceneReference scene)
+        {
+            var op = UnitySceneManager.LoadSceneAsync(scene.Path, LoadSceneMode.Additive);
+            AttachEmptyPayload(scene);
+            return op;
+        }
+
+        [Obsolete("Use LoadSubsceneAsync without parameters instead")]
+        //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static AsyncOperation LoadSubsceneAsync(int buildIndex, NoPayload payload)
         {
             var op = UnitySceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
@@ -221,6 +323,7 @@ namespace xksl
             return op;
         }
 
+        [Obsolete("Use LoadSubsceneAsync without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static AsyncOperation LoadSubsceneAsync(string path, NoPayload payload)
         {
@@ -229,6 +332,7 @@ namespace xksl
             return op;
         }
 
+        [Obsolete("Use LoadSubsceneAsync without parameters instead")]
         //Equivalent to calling LoadScene(LoadSceneMode.Additive)
         public static AsyncOperation LoadSubsceneAsync(SceneReference scene, NoPayload payload)
         {
@@ -287,7 +391,7 @@ namespace xksl
         //Only call this up to once per LoadScene call, multiple calls cannot be detected
         //due to not being able to strongly associate a payload with the loaded scene
         //Calling this function before or after the LoadScene call has 0 effect
-        public static void AttachPayload<T>(SceneReference scene, T payload)
+        public static void AttachPayload<U, T>(SceneReference<U> scene, T payload) where U : ISceneInitializer, ISceneInitializeWith<T>
         {
             AttachPayload(scene.Path, payload);
         }
@@ -297,6 +401,57 @@ namespace xksl
         //Only call this up to once per LoadScene call, multiple calls cannot be detected
         //due to not being able to strongly associate a payload with the loaded scene
         //Calling this function before or after the LoadScene call has 0 effect
+        public static void AttachEmptyPayload(int buildIndex)
+        {
+            string sceneName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(buildIndex));
+            Log("Loading \"" + sceneName + "\" with an empty payload");
+
+            if (!initializerMap.ContainsKey(buildIndex))
+            {
+                initializerMap.Add(buildIndex, new Queue<Action<Scene>>());
+            }
+
+            initializerMap[buildIndex].Enqueue(scene =>
+            {
+                ISceneInitializer initializer = FindInitializer(scene);
+                if (initializer == null)
+                {
+                    LogWarning("Could not find an initializer when trying to load \"" + sceneName + "\"\nInitialization will be skipped");
+                    return;
+                }
+
+                Log("Initializer found in scene \"" + sceneName + "\" with ObjectID: " + initializer.gameObject.GetInstanceID() +
+                    "\nInvoking initializer \"" + initializer.GetType() + "\" as Void Initialize()");
+                initializer.Initialize();
+            });
+        }
+
+        //Attaches no payload to the scene, invoking the empty arguments initializer
+        //Only call this if you're using some external function to load the scenes
+        //Only call this up to once per LoadScene call, multiple calls cannot be detected
+        //due to not being able to strongly associate a payload with the loaded scene
+        //Calling this function before or after the LoadScene call has 0 effect
+        public static void AttachEmptyPayload(string path)
+        {
+            AttachEmptyPayload(SceneUtility.GetBuildIndexByScenePath(path));
+        }
+
+        //Attaches no payload to the scene, invoking the empty arguments initializer
+        //Only call this if you're using some external function to load the scenes
+        //Only call this up to once per LoadScene call, multiple calls cannot be detected
+        //due to not being able to strongly associate a payload with the loaded scene
+        //Calling this function before or after the LoadScene call has 0 effect
+        public static void AttachEmptyPayload(SceneReference scene)
+        {
+            AttachEmptyPayload(scene.Path);
+        }
+
+        //Attaches no payload to the scene, invoking the empty arguments initializer
+        //Only call this if you're using some external function to load the scenes
+        //Only call this up to once per LoadScene call, multiple calls cannot be detected
+        //due to not being able to strongly associate a payload with the loaded scene
+        //Calling this function before or after the LoadScene call has 0 effect
+        [Obsolete("Use AttachEmptyPayload without parameters instead")]
         public static void AttachPayload(int buildIndex, NoPayload payload)
         {
             string sceneName = System.IO.Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(buildIndex));
@@ -327,6 +482,7 @@ namespace xksl
         //Only call this up to once per LoadScene call, multiple calls cannot be detected
         //due to not being able to strongly associate a payload with the loaded scene
         //Calling this function before or after the LoadScene call has 0 effect
+        [Obsolete("Use AttachEmptyPayload without parameters instead")]
         public static void AttachPayload(string path, NoPayload payload)
         {
             AttachPayload(SceneUtility.GetBuildIndexByScenePath(path), payload);
@@ -337,6 +493,7 @@ namespace xksl
         //Only call this up to once per LoadScene call, multiple calls cannot be detected
         //due to not being able to strongly associate a payload with the loaded scene
         //Calling this function before or after the LoadScene call has 0 effect
+        [Obsolete("Use AttachEmptyPayload without parameters instead")]
         public static void AttachPayload(SceneReference scene, NoPayload payload)
         {
             AttachPayload(scene.Path, payload);
