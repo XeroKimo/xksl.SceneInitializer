@@ -13,8 +13,6 @@ namespace xksl
 {
     public struct NoPayload { };
 
-
-
     public static class SceneManager
     {
         static Dictionary<int, Queue<Action<Scene>>> initializerMap = new Dictionary<int, Queue<Action<Scene>>>();
@@ -40,21 +38,21 @@ namespace xksl
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void InitializeFirstScene()
         {
-            SceneInitializer initializer = GameObject.FindObjectOfType<SceneInitializer>();
-            if (!initializer)
+            ISceneInitializer initializer = UnitySceneManager.GetActiveScene().FindInitializer();
+            if (initializer == null)
             {
                 LogWarning("No initializer found for start up scene: " + UnitySceneManager.GetActiveScene().name);
                 return;
             }
 
             Log("Initializing start up scene: " + UnitySceneManager.GetActiveScene().name);
-            if (initializer.defaultInitializer != null)
+            if (initializer.DefaultInitializer != null)
             {
-                initializer.defaultInitializer.Initialize(initializer);
+                initializer.DefaultInitializer.Initialize(initializer);
             }
             else
             {
-                Log("Invoking default initializer on ObjectID: " + initializer.GetInstanceID() + " as Void Initialize()");
+                Log("Invoking default initializer on ObjectID: " + initializer.gameObject.GetInstanceID() + " as Void Initialize()");
                 initializer.Initialize();
             }
         }
@@ -370,7 +368,7 @@ namespace xksl
                     return;
                 }
 
-                Log("Initializer found in scene \"" + sceneName + "\" with ObjectID: " + (initializer as SceneInitializer).gameObject.GetInstanceID() +
+                Log("Initializer found in scene \"" + sceneName + "\" with ObjectID: " + initializer.gameObject.GetInstanceID() +
                     "\nInvoking initializer \"" + initializer.GetType() + "\" as " + typeof(ISceneInitializeWith<T>).GetMethod(nameof(initializer.Initialize)));
                 initializer.Initialize(payload);
             });

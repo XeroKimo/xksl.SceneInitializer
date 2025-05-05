@@ -8,19 +8,20 @@ namespace xksl
     public interface ISceneInitializer
     {
         protected internal DefaultSceneInitializer DefaultInitializer { get; set; }
-        GameObject gameObject { get; }
-        void Initialize();
+        public GameObject gameObject { get; }
+        protected internal abstract void Initialize();
     }
 
     public interface ISceneInitializeWith<T>
     {
-        void Initialize(T args);
+        public GameObject gameObject { get; }
+        protected internal abstract void Initialize(T args);
     }
 
     [Serializable]
     public abstract class DefaultSceneInitializer
     {
-        public abstract void Initialize(SceneInitializer self);
+        internal abstract void Initialize(ISceneInitializer self);
     }
 
     public class DefaultSceneInitializer<T> : DefaultSceneInitializer
@@ -28,11 +29,11 @@ namespace xksl
         [SerializeField]
         public T args;
 
-        public override void Initialize(SceneInitializer self)
+        internal sealed override void Initialize(ISceneInitializer self) 
         {
             Debug.Assert(self as ISceneInitializeWith<T> != null, "Somehow an initializer of a non-matching type was attached");
 
-            SceneManager.Log("Invoking default initializer on ObjectID: " + self.GetInstanceID() + " as " + typeof(ISceneInitializeWith<T>).GetMethod(nameof(ISceneInitializeWith<T>.Initialize)));
+            SceneManager.Log("Invoking default initializer on ObjectID: " + self.gameObject.GetInstanceID() + " as " + typeof(ISceneInitializeWith<T>).GetMethod(nameof(ISceneInitializeWith<T>.Initialize)));
             (self as ISceneInitializeWith<T>).Initialize(args);
         }
     }
@@ -44,9 +45,11 @@ namespace xksl
 
         DefaultSceneInitializer ISceneInitializer.DefaultInitializer { get => defaultInitializer; set => defaultInitializer = value; }
 
-        virtual public void Initialize()
+        void ISceneInitializer.Initialize()
         {
-
+            Initialize();
         }
+
+        protected abstract void Initialize();
     }
 }
