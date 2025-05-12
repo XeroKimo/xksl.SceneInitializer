@@ -30,6 +30,8 @@ namespace xksl
         const string undoGroupInitializerCreationName = "Scene Initalizer Creation";
         const string undoGroupDefaultInitializerAssignmentName = "Default Initalizer Assignment";
 
+        Vector2 scrollPosition;
+
         [MenuItem("Scenes/Initializer Window")]
         public static void ShowWindow()
         {
@@ -74,7 +76,8 @@ namespace xksl
             Scene activeScene = EditorSceneManager.GetActiveScene();
             ISceneInitializer initializer = activeScene.FindInitializer();
 
-
+            using var scrollView = new GUILayout.ScrollViewScope(scrollPosition);
+            scrollPosition = scrollView.scrollPosition;
             int newIndex = EditorGUILayout.Popup("Initializer Type", initializerSelectedIndex, initializerTypesNames);
             if (newIndex != initializerSelectedIndex)
             {

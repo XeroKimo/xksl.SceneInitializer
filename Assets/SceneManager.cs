@@ -369,7 +369,7 @@ namespace xksl
                 }
 
                 Log("Initializer found in scene \"" + sceneName + "\" with ObjectID: " + initializer.gameObject.GetInstanceID() +
-                    "\nInvoking initializer \"" + initializer.GetType() + "\" as " + typeof(ISceneInitializeWith<T>).GetMethod(nameof(initializer.Initialize)));
+                    "\nInvoking initializer \"" + initializer.GetType() + $"\" as Void Initialize({typeof(T).Name})");
                 initializer.Initialize(payload);
             });
         }
